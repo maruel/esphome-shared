@@ -51,7 +51,7 @@ tornado==6.3.3
 typing_extensions==4.1.1
 tzdata==2021.5
 tzlocal==5.2
-urllib3==2.0.6
+urllib3==2.0.7
 uvicorn==0.22.0
 voluptuous==0.13.1
 wsproto==1.2.0
