@@ -1,0 +1,16 @@
+# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+
+logger:
+  # https://esphome.io/components/logger.html#log-levels
+  level: DEBUG
+  #level: VERBOSE
+  # Warning: some configs uses the serial port GPIOs for other things.
+  # Disable serial:
+  #baud_rate: 0
+
+
+# Disable rebooting continuously.
+api:
+  reboot_timeout: 0s
