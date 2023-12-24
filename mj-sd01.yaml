@@ -1,0 +1,52 @@
+# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+#
+## "Martin Jerry MJ-SD01"
+#
+# GPIO0  Button Up
+# GPIO1  Button Down
+# GPIO3  LED 5
+# GPIO4  Red LED
+# GPIO5  LED 4
+# GPIO12 LED 3
+# GPIO13 PWM
+# GPIO14 LED 2
+# GPIO15 Button Main
+# GPIO16 LED 1 & Relay, Reset button, Blue LED
+#
+## Model ESP8266 (old) et TYWE3S (new)
+#
+# CN1-1 TXD
+# CN1-2 RXD
+# CN1-3 GPIO2
+# CN1-4 GPIO0
+# CN1-5 GROUND
+# CN1-6 VCC
+#
+## TYWE3S info:
+#
+# https://tasmota.github.io/docs/devices/Martin-Jerry-MJ-SD01/
+# https://tasmota.github.io/docs/devices/TYWE3S/
+# https://developer.tuya.com/en/docs/iot/wifie3smodule?id=K9605ua1cx9tv
+
+
+esphome:
+  name: ${devicename}
+  build_path: out/${devicename}
+  platformio_options:
+    upload_speed: 115200
+
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+
+
+power_supply:
+  - id: relay
+    pin:
+      number: GPIO16
+      inverted: True
+    enable_time: 0s
+    keep_on_time: 0s

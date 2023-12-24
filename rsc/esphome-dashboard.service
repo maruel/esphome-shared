@@ -1,0 +1,18 @@
+# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+
+[Unit]
+Description=ESPHome Dashboard
+After=network-online.service
+Wants=network-online.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/home/esphome
+ExecStart=%h/home/esphome/esphome-shared/dashboard.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,231 @@
+# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+#
+# "Martin Jerry MJ-SD01"
+#
+# Used as standard light.
+
+
+binary_sensor:
+  - platform: gpio
+    #name: "${upper_devicename} Button Up"
+    id: button_up
+    pin:
+      number: GPIO0
+      inverted: True
+      mode: INPUT_PULLUP
+    on_press:
+      - if:
+          condition:
+            light.is_on: dimmer
+          then:
+            - lambda: !lambda |-
+                // Similar to light.dim_relative but add the flashing.
+                auto val = id(dimmer).remote_values.get_brightness();
+                if (val >= (${steps}.0f-1.0f)/${steps}.0f) {
+                  val = 1.0f;
+                } else {
+                  val += 1.0f/${steps}.0f;
+                }
+                auto call = id(dimmer).turn_on();
+                call.set_brightness(val);
+                call.perform();
+                if (val == 1.f) {
+                  id(flash_lights).execute();
+                }
+          else:
+            - light.turn_on:
+                id: dimmer
+                brightness: "${intensity_up}"
+    on_click:
+      min_length: ${long_press_min}
+      max_length: ${long_press_max}
+      then:
+        - light.turn_on:
+            id: dimmer
+            brightness: "${intensity_up}"
+  - platform: gpio
+    #name: "${upper_devicename} Button Down"
+    id: button_down
+    pin:
+      number: GPIO1
+      inverted: True
+      mode: INPUT_PULLUP
+    on_press:
+      - if:
+          condition:
+            light.is_on: dimmer
+          then:
+            - lambda: !lambda |-
+                // Similar to light.dim_relative but add the flashing.
+                auto val = id(dimmer).remote_values.get_brightness();
+                if (val <= 1.0f/${steps}.0f) {
+                  val = .01f;
+                } else {
+                  val -= 1.0f/${steps}.0f;
+                }
+                auto call = id(dimmer).turn_on();
+                call.set_brightness(val);
+                call.perform();
+                if (val == 0.01f) {
+                  id(flash_lights).execute();
+                }
+          else:
+            - light.turn_on:
+                id: dimmer
+                brightness: "${intensity_down}"
+    on_click:
+      min_length: ${long_press_min}
+      max_length: ${long_press_max}
+      then:
+        - light.turn_on:
+            id: dimmer
+            brightness: "${intensity_down}"
+  - platform: gpio
+    #name: "${upper_devicename} Button"
+    id: button_main
+    pin:
+      number: GPIO15
+      mode: INPUT_PULLUP
+    on_press:
+      - if:
+          condition:
+            light.is_on: dimmer
+          then:
+            - light.turn_off: dimmer
+          else:
+            - light.turn_on:
+                id: dimmer
+                brightness: "${intensity_main}"
+    on_click:
+      min_length: ${long_press_min}
+      max_length: ${long_press_max}
+      then:
+        - light.turn_on:
+            id: dimmer
+            brightness: "${intensity_main}"
+
+
+light:
+  - platform: status_led
+    id: ledred
+    pin:
+      number: GPIO4
+      inverted: True
+  - platform: monochromatic
+    name: "${upper_devicename}"
+    id: dimmer
+    output: pwm
+    default_transition_length: 0s
+    gamma_correct: "${gamma_correct}"
+    effects:
+      - flicker:
+          name: "Flicker"
+          alpha: 90%
+          intensity: 25%
+      - strobe:
+          name: "Fast Pulse"
+          colors:
+            - state: true
+              brightness: 100%
+              duration: 500ms
+            - brightness: 1%
+              duration: 750ms
+    on_state:
+      - script.execute: set_lights
+
+
+script:
+  - id: set_lights
+    then:
+      - lambda: |-
+          if (id(dimmer).remote_values.get_state() == 0.f) {
+            id(led2).turn_off();
+            id(led3).turn_off();
+            id(led4).turn_off();
+            id(led5).turn_off();
+            // Comment the following line out if you don't want the red LED when
+            // the dimmer is off.
+            id(ledred).turn_on().perform();
+            return;
+          }
+          id(ledred).turn_off().perform();
+          auto val = id(dimmer).remote_values.get_brightness();
+          if (val >= .1f) {
+            id(led2).turn_on();
+          } else {
+            id(led2).turn_off();
+          }
+          if (val >= .36f) {
+            id(led3).turn_on();
+          } else {
+            id(led3).turn_off();
+          }
+          if (val >= .73f) {
+            id(led4).turn_on();
+          } else {
+            id(led4).turn_off();
+          }
+          if (val >= .9f) {
+            id(led5).turn_on();
+          } else {
+            id(led5).turn_off();
+          }
+  - id: flash_lights
+    then:
+      - output.turn_on: led2
+      - output.turn_on: led3
+      - output.turn_on: led4
+      - output.turn_on: led5
+      - delay: 150ms
+      - output.turn_off: led2
+      - output.turn_off: led3
+      - output.turn_off: led4
+      - output.turn_off: led5
+      - delay: 150ms
+      - output.turn_on: led2
+      - output.turn_on: led3
+      - output.turn_on: led4
+      - output.turn_on: led5
+      - delay: 150ms
+      - output.turn_off: led2
+      - output.turn_off: led3
+      - output.turn_off: led4
+      - output.turn_off: led5
+      - delay: 150ms
+      - script.execute: set_lights
+
+
+output:
+  - platform: esp8266_pwm
+    power_supply: relay
+    pin: GPIO13
+    id: pwm
+    frequency: ${frequency}
+    min_power: ${min_power}
+  - platform: gpio
+    id: led2
+    pin: GPIO14
+    inverted: true
+  - platform: gpio
+    id: led3
+    pin: GPIO12
+    inverted: true
+  - platform: gpio
+    id: led4
+    pin: GPIO5
+    inverted: true
+  - platform: gpio
+    id: led5
+    pin: GPIO3
+    inverted: true
+
+
+sensor:
+  - platform: wifi_signal
+    name: "${upper_devicename} WiFi Signal"
+    update_interval: 600s
+
+
+<<: !include mj-sd01.yaml
