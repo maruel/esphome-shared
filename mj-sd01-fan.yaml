@@ -1,0 +1,209 @@
+# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+#
+# "Martin Jerry MJ-SD01"
+#
+# Used as a fan timer, like in a bathroom.
+#
+# substitutions:
+#   max_time: "30"
+#   increment: "5"
+#   default_time: "10"
+
+binary_sensor:
+  - platform: gpio
+    #name: "${upper_devicename} Button Up"
+    id: bouton_up
+    pin:
+      number: GPIO0
+      inverted: True
+      mode: INPUT_PULLUP
+    on_press:
+      - lambda: !lambda |-
+          auto now = id(current_time).timestamp_now();
+          if (id(until) == 0) {
+            id(until) = now;
+          }
+          id(until) += ${increment}*60;
+          auto max = now + ${max_time}*60;
+          if (id(until) > max) {
+            id(until) = max;
+            id(flash_lights).execute();
+          }
+          if (!id(myfan).state) {
+            id(myfan).turn_on().perform();
+          }
+  - platform: gpio
+    #name: "${upper_devicename} Button Down"
+    id: bouton_down
+    pin:
+      number: GPIO1
+      inverted: True
+      mode: INPUT_PULLUP
+    on_press:
+      - lambda: !lambda |-
+          if (id(myfan).state) {
+            id(until) -= ${increment}*60;
+            if (id(until) <= id(current_time).timestamp_now()) {
+              id(myfan).turn_off().perform();
+            }
+          } else {
+            id(myfan).turn_on().perform();
+          }
+  - platform: gpio
+    #name: "${upper_devicename} Button"
+    id: bouton_main
+    pin:
+      number: GPIO15
+      mode: INPUT_PULLUP
+    on_press:
+      - fan.toggle: myfan
+
+
+fan:
+  - platform: binary
+    id: myfan
+    name: "${upper_devicename}"
+    output: out
+    on_turn_on:
+      - light.turn_off: ledred
+      - lambda: !lambda |-
+          // Happens if activated via automation.
+          if (id(until) == 0) {
+            id(until) = id(current_time).timestamp_now() + ${default_time}*60;
+          }
+    on_turn_off:
+      - light.turn_on: ledred
+      - lambda: !lambda id(until) = 0;
+
+
+light:
+  - platform: status_led
+    id: ledred
+    pin:
+      number: GPIO4
+      inverted: True
+    restore_mode: ALWAYS_ON
+
+
+time:
+  - platform: homeassistant
+    id: current_time
+
+
+globals:
+  - id: until
+    type: uint32_t
+    restore_value: no
+
+
+interval:
+  - interval: 250ms
+    then:
+      - lambda: |-
+          auto now = id(current_time).timestamp_now();
+          if (id(until) <= now) {
+            id(myfan).turn_off().perform();
+          }
+          id(set_lights).execute();
+
+
+script:
+  - id: set_lights
+    then:
+      - lambda: |-
+          if (id(until) == 0) {
+            id(led2).turn_off();
+            id(led3).turn_off();
+            id(led4).turn_off();
+            id(led5).turn_off();
+            return;
+          }
+          auto delta = (${max_time}*60) / 5;
+          auto limit = id(current_time).timestamp_now() + delta;
+          if (id(until) >= limit) {
+            id(led2).turn_on();
+          } else {
+            id(led2).turn_off();
+          }
+          limit += delta;
+          if (id(until) >= limit) {
+            id(led3).turn_on();
+          } else {
+            id(led3).turn_off();
+          }
+          limit += delta;
+          if (id(until) >= limit) {
+            id(led4).turn_on();
+          } else {
+            id(led4).turn_off();
+          }
+          limit += delta;
+          if (id(until) >= limit) {
+            id(led5).turn_on();
+          } else {
+            id(led5).turn_off();
+          }
+  - id: flash_lights
+    then:
+      - output.turn_on: led2
+      - output.turn_on: led3
+      - output.turn_on: led4
+      - output.turn_on: led5
+      - delay: 150ms
+      - output.turn_off: led2
+      - output.turn_off: led3
+      - output.turn_off: led4
+      - output.turn_off: led5
+      - delay: 150ms
+      - output.turn_on: led2
+      - output.turn_on: led3
+      - output.turn_on: led4
+      - output.turn_on: led5
+      - delay: 150ms
+      - output.turn_off: led2
+      - output.turn_off: led3
+      - output.turn_off: led4
+      - output.turn_off: led5
+      - delay: 150ms
+      - script.execute: set_lights
+
+
+output:
+  - platform: gpio
+    power_supply: relay
+    pin: GPIO13
+    id: out
+  - platform: gpio
+    id: led2
+    pin: GPIO14
+    inverted: true
+  - platform: gpio
+    id: led3
+    pin: GPIO12
+    inverted: true
+  - platform: gpio
+    id: led4
+    pin: GPIO5
+    inverted: true
+  - platform: gpio
+    id: led5
+    pin: GPIO3
+    inverted: true
+
+# https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/
+sensor:
+  - platform: wifi_signal
+    name: "${upper_devicename} WiFi Signal"
+    update_interval: 600s
+  - platform: template
+    name: "${upper_devicename} Timer"
+    lambda: !lambda "return id(until) ? ((id(until) - id(current_time).timestamp_now())/60.f) : 0;"
+    accuracy_decimals: 0
+    unit_of_measurement: minutes
+    update_interval: 5s
+    icon: mdi:timer
+
+
+<<: !include mj-sd01.yaml

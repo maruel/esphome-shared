@@ -13,7 +13,7 @@ cd ..
 
 source .venv/bin/activate
 
-for i in $(ls *.yaml); do
+for i in $(ls *.yaml | grep -v 'secrets\.yaml'); do
   echo $i
-  esphome compile $i
+  esphome --quiet  compile $i
 done
