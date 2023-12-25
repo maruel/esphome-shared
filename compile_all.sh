@@ -13,7 +13,18 @@ cd ..
 
 source .venv/bin/activate
 
-for i in $(ls *.yaml | grep -v 'secrets\.yaml'); do
+echo "If one fails, either fix the file or edit devs.txt and"
+echo "run again this command again."
+echo ""
+
+if [ ! -f devs.txt ]; then
+  ls *.yaml | grep -v 'secrets\.yaml' > devs.txt
+fi
+
+for i in $(cat devs.txt); do
   echo $i
-  esphome --quiet  compile $i
+  esphome --quiet compile $i
 done
+
+# Success
+rm devs.txt
