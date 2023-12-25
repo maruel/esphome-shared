@@ -14,7 +14,7 @@ source .venv/bin/activate
 pip install -U pip
 pip install -U esphome
 # For fonts support.
-pip install -U pillow">4.0.0,<10.0.0"
+pip install -U pillow
 pip freeze > esphome-shared/requirements.txt
 
 git diff esphome-shared/requirements.txt
