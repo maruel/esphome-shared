@@ -8,10 +8,6 @@
 set -eu
 
 cd "$(dirname $0)"
-if [ "$(pwd)" != "$HOME/home/esphome/esphome-shared" ]; then
-  echo "Sorry, please install via https://github.com/maruel/ha-template"
-  exit 1
-fi
 cd ..
 
 # Set it to -v for verbosity.

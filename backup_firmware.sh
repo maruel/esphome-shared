@@ -9,6 +9,10 @@ set -eu
 
 cd "$(dirname $0)"
 cd ..
+if [ ! -f .venv/bin/activate ]; then
+  echo "Run setup.sh"
+  exit 1
+fi
 
 source .venv/bin/activate
 comport=/dev/ttyUSB0

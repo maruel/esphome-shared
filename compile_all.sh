@@ -10,6 +10,10 @@ set -eu
 
 cd "$(dirname $0)"
 cd ..
+if [ ! -f .venv/bin/activate ]; then
+  echo "run setup.sh"
+  exit 1
+fi
 
 source .venv/bin/activate
 
