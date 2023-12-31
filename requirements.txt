@@ -16,14 +16,15 @@ charset-normalizer==2.1.1
 click==8.1.7
 colorama==0.4.6
 colorlog==4.6.2
-cryptography==41.0.4
+cryptography==41.0.7
 ecdsa==0.18.0
-esphome==2023.12.3
+esphome==2023.12.5
 esphome-dashboard==20231107.0
-esptool==4.6.2
+esptool==4.7.0
 h11==0.14.0
 idna==3.4
 ifaddr==0.1.7
+intelhex==2.3.0
 kconfiglib==13.7.1
 marshmallow==3.18.0
 noiseprotocol==0.3.1
@@ -52,7 +53,7 @@ tornado==6.4
 typing_extensions==4.1.1
 tzdata==2021.5
 tzlocal==5.2
-urllib3==2.0.6
+urllib3==2.1.0
 uvicorn==0.22.0
 voluptuous==0.14.1
 wsproto==1.2.0

@@ -17,9 +17,17 @@ fi
 source .venv/bin/activate
 pip install -U pip
 pip install -U esphome
+
 # For fonts support.
 pip install -U pillow
-pip freeze > esphome-shared/requirements.txt
 
+# Security updates as per
+# https://github.com/maruel/esphome-shared/security/dependabot
+pip install -U cryptography">=41.0.6"
+pip install -U esptool">4.6.2"
+pip install -U urllib3">=2.0.7"
+
+# Freeze and diff
+pip freeze > esphome-shared/requirements.txt
 git diff esphome-shared/requirements.txt
 echo "See https://github.com/esphome/esphome/releases/ for changes."
