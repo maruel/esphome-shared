@@ -13,12 +13,12 @@ cd ..
 
 source .venv/bin/activate
 
-echo "If one fails, either rename the file to _unused.yaml or edit devs.txt and"
+echo "If one fails, either rename the file to test*.yaml or edit devs.txt and"
 echo "run again this command again."
 echo ""
 
 if [ ! -f devs.txt ]; then
-  ls *.yaml | grep -v unused | grep -v 'secrets\.yaml' > devs.txt
+  ls *.yaml | grep -v 'secrets\.yaml' | grep -v '^test' > devs.txt
 fi
 
 for i in $(cat devs.txt); do
