@@ -7,8 +7,7 @@
 
 set -eu
 
-cd "$(dirname $0)"
-cd ..
+cd "$(dirname $0)/.."
 
 # Set it to -v for verbosity.
 QUIET=-q
@@ -36,9 +35,10 @@ fi
 # Because of
 # https://github.com/platformio/platform-espressif32/blob/HEAD/builder/frameworks/espidf.py
 # TODO(maruel): The version will be stale.
-if [ ! -f /usr/lib/python3.10/ensurepip/__init__.py ]; then
-  echo "- Installing python3.10-venv"
-  sudo apt install -y -q python3.10-venv
+SYSTEM_PYTHON=$(python3 -c "import sys; print(f'python{sys.version_info[0]}.{sys.version_info[1]}')")
+if [ ! -f /usr/lib/$SYSTEM_PYTHON/ensurepip/__init__.py ]; then
+  echo "- Installing $SYSTEM_PYTHON-venv"
+  sudo apt install -y -q $SYSTEM_PYTHON-venv
 fi
 
 GROUP_ADDED=0
@@ -60,7 +60,7 @@ ota_password: "$(apg -M CLN -m 8 -n 1)"
 wifi_ssid: "WIFI_SSID"
 wifi_pass: "WIFI_PASS"
 EOF
-  nano secrets.yaml
+  vim secrets.yaml
 fi
 
 if [ ! -d .venv ]; then

@@ -7,8 +7,7 @@
 
 set -eu
 
-cd "$(dirname $0)"
-cd ..
+cd "$(dirname $0)/.."
 if [ ! -f .venv/bin/activate ]; then
   echo "run setup.sh"
   exit 1
@@ -16,16 +15,7 @@ fi
 
 source .venv/bin/activate
 pip install -U pip
-pip install -U esphome
-
-# For fonts support.
-pip install -U pillow
-
-# Security updates as per
-# https://github.com/maruel/esphome-shared/security/dependabot
-pip install -U cryptography">=41.0.6"
-pip install -U esptool">4.6.2"
-pip install -U urllib3">=2.0.7"
+pip install -U esphome pillow
 
 # Freeze and diff
 pip freeze > esphome-shared/requirements.txt
