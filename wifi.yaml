@@ -15,7 +15,6 @@ wifi:
   # flash again.
   #use_address: <old_name>.local
 
-
 captive_portal:
 
 
