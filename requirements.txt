@@ -1,4 +1,4 @@
-aioesphomeapi==23.2.0
+aioesphomeapi==24.3.0
 aiofiles==23.1.0
 aiohappyeyeballs==2.3.1
 ajsonrpc==1.2.0
@@ -19,7 +19,7 @@ colorama==0.4.6
 colorlog==4.6.2
 cryptography==42.0.2
 ecdsa==0.18.0
-esphome==2024.4.1
+esphome==2024.5.5
 esphome-dashboard==20240412.0
 esptool==4.7.0
 h11==0.14.0
@@ -33,7 +33,7 @@ noiseprotocol==0.3.1
 packaging==21.3
 paho-mqtt==1.6.1
 pillow==10.3.0
-platformio==6.1.13
+platformio==6.1.15
 protobuf==3.20.3
 pyaes==1.6.1
 pycparser==2.20
@@ -61,4 +61,4 @@ urllib3==2.0.6
 uvicorn==0.22.0
 voluptuous==0.14.2
 wsproto==1.2.0
-zeroconf==0.131.0
+zeroconf==0.132.2
