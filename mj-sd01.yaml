@@ -33,6 +33,7 @@
 
 esphome:
   name: ${devicename}
+  comment: "MJ-SD01"
   build_path: out/${devicename}
   platformio_options:
     upload_speed: 115200
