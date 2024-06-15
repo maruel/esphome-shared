@@ -9,6 +9,7 @@ wifi:
     ssid: "${upper_devicename} is lost"
     password: !secret ap_password
     ap_timeout: 5min
+  fast_connect: true
   # https://esphome.io/components/esphome.html#changing-esphome-node-name
   # To rename a device, copy the whole wifi block into the node yaml, add the
   # following in the copied block, flash, remove the block and uncomment here,
