@@ -22,12 +22,17 @@ echo "run again this command again."
 echo ""
 
 if [ ! -f devs.txt ]; then
-  ls *.yaml | grep -v 'secrets\.yaml' | grep -v '^test' > devs.txt
+  ls *.yaml | grep -v 'secrets\.yaml' > devs.txt
 fi
 
 for i in $(cat devs.txt); do
-  echo $i
-  esphome --quiet run --no-logs $i
+  if [[ $i == *.unused.yaml ]]; then
+    echo "- Compiling: $i"
+    esphome compile $i
+  else
+    echo "- Updating: $i"
+    esphome --quiet run --no-logs $i
+  fi
 done
 
 # Success
