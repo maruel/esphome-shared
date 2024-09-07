@@ -223,6 +223,8 @@ output:
 
 
 sensor:
+  - platform: uptime
+    name: "${upper_devicename} Uptime"
   - platform: wifi_signal
     name: "${upper_devicename} WiFi Signal"
     update_interval: 600s

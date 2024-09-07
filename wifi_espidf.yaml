@@ -1,4 +1,4 @@
-# Copyright 2023 Marc-Antoine Ruel. All rights reserved.
+# Copyright 2024 Marc-Antoine Ruel. All rights reserved.
 # Use of this source code is governed under the Apache License, Version 2.0
 # that can be found in the LICENSE file.
 
@@ -10,14 +10,19 @@ wifi:
     password: !secret ap_password
     ap_timeout: 5min
   fast_connect: true
+  # Allow the AP to steer the device to a better AP.
+  enable_btm: true
+  enable_rrm: true
   # https://esphome.io/components/esphome.html#changing-esphome-node-name
   # To rename a device, copy the whole wifi block into the node yaml, add the
   # following in the copied block, flash, remove the block and uncomment here,
   # flash again.
   #use_address: <old_name>.local
 
+
 captive_portal:
 
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password

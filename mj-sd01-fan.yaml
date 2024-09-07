@@ -194,6 +194,8 @@ output:
 
 # https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/
 sensor:
+  - platform: uptime
+    name: "${upper_devicename} Uptime"
   - platform: wifi_signal
     name: "${upper_devicename} WiFi Signal"
     update_interval: 600s
