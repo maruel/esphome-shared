@@ -19,7 +19,7 @@ colorama==0.4.6
 colorlog==4.6.2
 cryptography==43.0.0
 ecdsa==0.18.0
-esphome==2024.8.3
+esphome==2024.10.2
 esphome-dashboard==20240620.0
 esptool==4.7.0
 h11==0.14.0
@@ -32,9 +32,10 @@ marshmallow==3.18.0
 noiseprotocol==0.3.1
 packaging==21.3
 paho-mqtt==1.6.1
-pillow==10.4.0
+pillow==11.0.0
 platformio==6.1.15
 protobuf==3.20.3
+puremagic==1.27
 pyaes==1.6.1
 pycparser==2.20
 pyelftools==0.30
