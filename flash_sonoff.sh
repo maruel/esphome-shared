@@ -42,4 +42,4 @@ sleep 3
   --chip esp8266 \
   --port $comport \
   write_flash 0x0 \
-  $firmware 
+  $firmware

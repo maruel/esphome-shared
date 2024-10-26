@@ -15,4 +15,4 @@ if [ ! -f .venv/bin/activate ]; then
 fi
 
 source .venv/bin/activate
-esphome run --no-logs $1
+esphome run --no-logs "$@"
