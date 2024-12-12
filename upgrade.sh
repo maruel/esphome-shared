@@ -15,7 +15,7 @@ fi
 
 source .venv/bin/activate
 pip install -U pip
-pip install -U esphome pillow
+pip install -U esphome esphome-dashboard pillow
 
 # Freeze and diff
 pip freeze > esphome-shared/requirements.txt
