@@ -1,0 +1,50 @@
+# Copyright 2025 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+#
+## "Martin Jerry US-SS02"
+#
+# GPIO3  Button
+# GPIO4  I²C SCL
+# GPIO5  Relay
+# GPIO12 LED Red
+# GPIO13 I²C SDA
+# GPIO14 LED Blue
+
+
+esphome:
+  name: ${devicename}
+  comment: "MJ-US-SS02"
+  build_path: out/${devicename}
+  platformio_options:
+    upload_speed: 115200
+
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+
+
+i2c:
+  sda: GPIO13
+  scl: GPIO4
+
+
+output:
+  - platform: gpio
+    id: relay
+    pin: GPIO5
+  - platform: gpio
+    id: led_blue
+    pin:
+      number: GPIO14
+      inverted: True
+
+
+light:
+  - platform: status_led
+    id: led_red
+    pin:
+      number: GPIO12
+      inverted: True
+    restore_mode: ALWAYS_ON

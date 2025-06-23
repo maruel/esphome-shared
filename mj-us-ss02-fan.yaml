@@ -1,0 +1,140 @@
+# Copyright 2025 Marc-Antoine Ruel. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+#
+# "Martin Jerry US-SS02"
+#
+# Used as a fan timer, like in a bathroom.
+# substitutions:
+#   default_time: "30"
+#   on_humidity_threshold: "80"
+#   off_humidity_threshold: "50"
+
+
+fan:
+  - platform: binary
+    id: myfan
+    name: "${upper_devicename}"
+    output: relay
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - output.turn_on: led_blue
+      - lambda: !lambda |-
+          // Happens if activated via automation.
+          if (id(until) == 0) {
+            id(until) = id(current_time).timestamp_now() + ${default_time}*60;
+          }
+    on_turn_off:
+      - output.turn_off: led_blue
+      - globals.set:
+         id: until
+         value: "0"
+
+
+time:
+  - platform: homeassistant
+    id: current_time
+
+
+globals:
+  - id: until
+    type: uint32_t
+    restore_value: no
+
+
+#interval:
+#  - interval: 100ms
+#    then:
+#      - lambda: |-
+#          // Flash proportionally as how many minutes are left. Goes from 0.1Hz to 5Hz.
+#          auto now = id(current_time).timestamp_now();
+#          if (id(until) <= now) {
+#            id(myfan).turn_off().perform();
+#          }
+#          id(set_lights).execute();
+
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO3
+      mode: INPUT_PULLUP
+      inverted: true
+    id: main_button
+    on_press:
+      - fan.toggle: myfan
+
+
+sensor:
+  - platform: uptime
+    name: "${upper_devicename} Uptime"
+  - platform: wifi_signal
+    name: "${upper_devicename} WiFi Signal"
+    update_interval: 600s
+  #- platform: aht10
+  - platform: hdc1080
+    id: sensor_humidity
+    update_interval: 5s
+    temperature:
+      name: "${upper_devicename} Température"
+      filters:
+        - offset: 0
+    humidity:
+      name: "${upper_devicename} Humidité"
+      on_value:
+        then:
+          - if:
+              condition:
+                lambda: "return x >= id(on_humidity_threshold_ui).state;"
+              then:
+                - fan.turn_on: myfan
+          - if:
+              condition:
+                lambda: "return x <= id(off_humidity_threshold_ui).state;"
+              then:
+                - fan.turn_off: myfan
+  - platform: template
+    name: "${upper_devicename} Timer"
+    lambda: !lambda "return id(until) ? ((id(until) - id(current_time).timestamp_now())/60.f) : 0;"
+    accuracy_decimals: 0
+    unit_of_measurement: minutes
+    update_interval: 5s
+    icon: mdi:timer
+
+
+number:
+  - platform: template
+    name: "${upper_devicename} On Humidity Threshold"
+    id: on_humidity_threshold_ui
+    unit_of_measurement: "%"
+    min_value: 0
+    max_value: 100
+    step: 5
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: ${on_humidity_threshold}
+    icon: "mdi:water-percent"
+    entity_category: config
+    on_value:
+      - lambda: 'id(sensor_humidity).update();'
+  - platform: template
+    name: "${upper_devicename} Off Humidity Threshold"
+    id: off_humidity_threshold_ui
+    unit_of_measurement: "%"
+    min_value: 0
+    max_value: 100
+    step: 5
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: ${off_humidity_threshold}
+    icon: "mdi:water-percent"
+    entity_category: config
+    on_value:
+      - lambda: 'id(sensor_humidity).update();'
+
+
+<<: !include mj-us-ss02.yaml
