@@ -6,7 +6,7 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   ap:
-    ssid: "${upper_devicename} is lost"
+    ssid: "${friendly_name} is lost"
     password: !secret ap_password
     ap_timeout: 5min
   fast_connect: true

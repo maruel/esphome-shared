@@ -9,7 +9,7 @@
 
 binary_sensor:
   - platform: gpio
-    #name: "${upper_devicename} Button Up"
+    #name: "Button Up"
     id: button_up
     pin:
       number: GPIO0
@@ -46,7 +46,7 @@ binary_sensor:
             id: dimmer
             brightness: "${intensity_up}"
   - platform: gpio
-    #name: "${upper_devicename} Button Down"
+    #name: "Button Down"
     id: button_down
     pin:
       number: GPIO1
@@ -83,7 +83,7 @@ binary_sensor:
             id: dimmer
             brightness: "${intensity_down}"
   - platform: gpio
-    #name: "${upper_devicename} Button"
+    #name: "Button"
     id: button_main
     pin:
       number: GPIO15
@@ -114,7 +114,7 @@ light:
       number: GPIO4
       inverted: True
   - platform: monochromatic
-    name: "${upper_devicename}"
+    name: None
     id: dimmer
     output: pwm
     default_transition_length: 0s
@@ -224,9 +224,9 @@ output:
 
 sensor:
   - platform: uptime
-    name: "${upper_devicename} Uptime"
+    name: "Uptime"
   - platform: wifi_signal
-    name: "${upper_devicename} WiFi Signal"
+    name: "WiFi Signal"
     update_interval: 600s
 
 

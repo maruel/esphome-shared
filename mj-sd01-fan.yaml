@@ -13,7 +13,7 @@
 
 binary_sensor:
   - platform: gpio
-    #name: "${upper_devicename} Button Up"
+    #name: "Button Up"
     id: bouton_up
     pin:
       number: GPIO0
@@ -35,7 +35,7 @@ binary_sensor:
             id(myfan).turn_on().perform();
           }
   - platform: gpio
-    #name: "${upper_devicename} Button Down"
+    #name: "Button Down"
     id: bouton_down
     pin:
       number: GPIO1
@@ -52,7 +52,7 @@ binary_sensor:
             id(myfan).turn_on().perform();
           }
   - platform: gpio
-    #name: "${upper_devicename} Button"
+    #name: "Button"
     id: bouton_main
     pin:
       number: GPIO15
@@ -64,7 +64,7 @@ binary_sensor:
 fan:
   - platform: binary
     id: myfan
-    name: "${upper_devicename}"
+    name: None
     output: out
     on_turn_on:
       - light.turn_off: ledred
@@ -195,12 +195,12 @@ output:
 # https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/
 sensor:
   - platform: uptime
-    name: "${upper_devicename} Uptime"
+    name: "Uptime"
   - platform: wifi_signal
-    name: "${upper_devicename} WiFi Signal"
+    name: "WiFi Signal"
     update_interval: 600s
   - platform: template
-    name: "${upper_devicename} Timer"
+    name: "Timer"
     lambda: !lambda "return id(until) ? ((id(until) - id(current_time).timestamp_now())/60.f) : 0;"
     accuracy_decimals: 0
     unit_of_measurement: minutes

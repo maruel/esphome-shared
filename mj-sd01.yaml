@@ -33,6 +33,8 @@
 
 esphome:
   name: ${devicename}
+  friendly_name: ${friendly_name}
+  area: ${area}
   comment: "MJ-SD01"
   build_path: out/${devicename}
   platformio_options:
