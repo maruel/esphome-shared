@@ -32,7 +32,7 @@
 # - Enter http://ota.tasmota.com/tasmota/tasmota-minimal.bin.gz as the URL
 # - Wait 45s
 # - Build your firmware with `./run.sh`
-# - Upload from .esphome/out/switch16/.pioenvs/<devicename>/firmware.bin
+# - Upload from .esphome/out/<devicename>/.pioenvs/<devicename>/firmware.bin
 # - Wait 45s
 # - Open Home Assistant, it should be discovered!
 
