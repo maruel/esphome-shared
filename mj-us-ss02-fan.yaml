@@ -14,7 +14,7 @@
 fan:
   - platform: binary
     id: myfan
-    name: "${upper_devicename}"
+    name: None
     output: relay
     restore_mode: ALWAYS_OFF
     on_turn_on:
@@ -67,20 +67,20 @@ binary_sensor:
 
 sensor:
   - platform: uptime
-    name: "${upper_devicename} Uptime"
+    name: "Uptime"
   - platform: wifi_signal
-    name: "${upper_devicename} WiFi Signal"
+    name: "WiFi Signal"
     update_interval: 600s
   #- platform: aht10
   - platform: hdc1080
     id: sensor_humidity
     update_interval: 5s
     temperature:
-      name: "${upper_devicename} Température"
+      name: "Température"
       filters:
         - offset: 0
     humidity:
-      name: "${upper_devicename} Humidité"
+      name: "Humidité"
       on_value:
         then:
           - if:
@@ -94,7 +94,7 @@ sensor:
               then:
                 - fan.turn_off: myfan
   - platform: template
-    name: "${upper_devicename} Timer"
+    name: "Timer"
     lambda: !lambda "return id(until) ? ((id(until) - id(current_time).timestamp_now())/60.f) : 0;"
     accuracy_decimals: 0
     unit_of_measurement: minutes
@@ -104,7 +104,7 @@ sensor:
 
 number:
   - platform: template
-    name: "${upper_devicename} On Humidity Threshold"
+    name: "On Humidity Threshold"
     id: on_humidity_threshold_ui
     unit_of_measurement: "%"
     min_value: 0
@@ -120,7 +120,7 @@ number:
     on_value:
       - lambda: 'id(sensor_humidity).update();'
   - platform: template
-    name: "${upper_devicename} Off Humidity Threshold"
+    name: "Off Humidity Threshold"
     id: off_humidity_threshold_ui
     unit_of_measurement: "%"
     min_value: 0

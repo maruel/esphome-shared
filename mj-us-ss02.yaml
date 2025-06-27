@@ -10,10 +10,37 @@
 # GPIO12 LED Red
 # GPIO13 I²C SDA
 # GPIO14 LED Blue
+#
+# Flash: 1MiB
+# Mine was on Tasmota v13.0.0, 576KiB used, 424KiB free. HDC1080
+#
+# https://devices.esphome.io/devices/Martin-Jerry-US-SS02
+# These switches come preflashed with custom tasmota firmware, which leaves no space for an ESPHome binary OTA
+# update. If you would try to flash it with an ESPHome binary - update will fail.
+# This can be worked around by flashing the device with a Tasmota minimal binary first, then re-flashing with
+# your ESPHome binary.
+#
+# https://esphome.io/guides/migrate_sonoff_tasmota.html
+# - Using phone or laptop:
+#   - Connect with tasmota-<hex>-<hex>
+#   - Make it connect to my IoT WiFi.
+# - Connect to its new IP via your network.
+# - Confirm HDC1080 Temperature, Humidity, Dew point.
+# - Click Toggle to put it ON and confirm the fan works.
+# - Click Toggle again to turn it OFF.
+# - Click Upgrade
+# - Enter http://ota.tasmota.com/tasmota/tasmota-minimal.bin.gz as the URL
+# - Wait 45s
+# - Build your firmware with `./run.sh`
+# - Upload from .esphome/out/switch16/.pioenvs/<devicename>/firmware.bin
+# - Wait 45s
+# - Open Home Assistant, it should be discovered!
 
 
 esphome:
   name: ${devicename}
+  friendly_name: ${friendly_name}
+  area: ${area}
   comment: "MJ-US-SS02"
   build_path: out/${devicename}
   platformio_options:
