@@ -8,7 +8,9 @@
 # substitutions:
 #   default_time: "30"
 #   on_humidity_threshold: "80"
-#   off_humidity_threshold: "50"
+#   off_humidity_threshold: "65"
+#   offset_temperature: "-11"
+#   offset_humidity: "23"
 
 
 fan:
@@ -18,17 +20,15 @@ fan:
     output: relay
     restore_mode: ALWAYS_OFF
     on_turn_on:
+      - lambda: id(until) = id(current_time).timestamp_now() + ${default_time}*60;
       - output.turn_on: led_blue
-      - lambda: !lambda |-
-          // Happens if activated via automation.
-          if (id(until) == 0) {
-            id(until) = id(current_time).timestamp_now() + ${default_time}*60;
-          }
+      - light.turn_off: led_red
     on_turn_off:
-      - output.turn_off: led_blue
       - globals.set:
          id: until
          value: "0"
+      - output.turn_off: led_blue
+      - light.turn_on: led_red
 
 
 time:
@@ -42,16 +42,17 @@ globals:
     restore_value: no
 
 
-#interval:
-#  - interval: 100ms
-#    then:
-#      - lambda: |-
-#          // Flash proportionally as how many minutes are left. Goes from 0.1Hz to 5Hz.
-#          auto now = id(current_time).timestamp_now();
-#          if (id(until) <= now) {
-#            id(myfan).turn_off().perform();
-#          }
-#          id(set_lights).execute();
+interval:
+  - interval: 100ms
+    then:
+      - lambda: |-
+          // Turn fan off when timer runs out.
+          auto now = id(current_time).timestamp_now();
+          if (id(until) <= now) {
+            id(myfan).turn_off().perform();
+          }
+          // TODO: Flash proportionally as how many minutes are left. Goes from 0.1Hz to 5Hz.
+          //id(set_lights).execute();
 
 
 binary_sensor:
@@ -78,9 +79,11 @@ sensor:
     temperature:
       name: "Température"
       filters:
-        - offset: 0
+        - offset: ${offset_temperature}
     humidity:
       name: "Humidité"
+      filters:
+        - offset: ${offset_humidity}
       on_value:
         then:
           - if:
